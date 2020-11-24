@@ -6,7 +6,7 @@ from enum import Enum, auto
 import numpy as np
 import networkx as nx
 
-from planning_utils import a_star, heuristic, create_grid, create_grid_and_edges, find_start_goal_2d
+from planning_utils import a_star, heuristic, create_grid, create_grid_and_edges, find_start_goal_2d, collinearity_prune
 from udacidrone import Drone
 from udacidrone.connection import MavlinkConnection
 from udacidrone.messaging import MsgID
@@ -174,7 +174,8 @@ class MotionPlanning(Drone):
 
         path, _ = a_star(grid, heuristic, grid_start, grid_goal)
         # TODO: prune path to minimize number of waypoints
-        # TODO (if you're feeling ambitious): Try a different approach altogether!
+        path = collinearity_prune(path)
+
 
         # Convert path to waypoints
         waypoints = [[p[0] + north_offset, p[1] + east_offset, TARGET_ALTITUDE, 0] for p in path]
